@@ -13,6 +13,7 @@ struct Block {
 #[derive(Clone)]
 struct Schedule {
     blocks: Vec<Block>,
+    start_of_day: NaiveTime,
     end_of_day: NaiveTime
 }
 impl Schedule {
@@ -62,6 +63,7 @@ fn load_scheduel() -> HashMap<Weekday,Schedule> {
                 name: "Per. 6".to_string()
             }
         ],
+        start_of_day: NaiveTime::from_hms(9,16,0),
         end_of_day: NaiveTime::from_hms(13,32,0)
     };
     let wed_fri = Schedule { 
@@ -82,6 +84,7 @@ fn load_scheduel() -> HashMap<Weekday,Schedule> {
                 name: "Per. 6".to_string()
             }
         ],
+        start_of_day: NaiveTime::from_hms(9,16,0),
         end_of_day: NaiveTime::from_hms(14,37,0)
     };
     let tue_thur = Schedule { 
@@ -102,6 +105,7 @@ fn load_scheduel() -> HashMap<Weekday,Schedule> {
                 name: "Per. 5".to_string()
             }
         ],
+        start_of_day: NaiveTime::from_hms(9,16,0),
         end_of_day: NaiveTime::from_hms(14,37,0)
     };
     //adding days to the output
@@ -162,14 +166,26 @@ fn main() {
                     if pkgs_count > 0 {let pkgs = format!(" ({})",pkgs_count).into_boxed_str();
                     line += &pkgs};
                     println!("{}",line)
-            } else if tod > sched.end_of_day {//2pm
-                println!("{}",
-                    tod.format("%I:%M %P")
-                );
+            } else if (tod > sched.end_of_day) || (tod < sched.start_of_day) {//2pm
+                let mut line = format!("{}",tod.format("%I:%M %P"));
+                let pkgs_count = get_upgradable_packages();
+                #[cfg(debug_assertions)]
+                println!("{}",pkgs_count);
+                if pkgs_count > 0 {
+                    let pkgs = format!(" ({})",pkgs_count).into_boxed_str();
+                    line += &pkgs
+                };
+                println!("{}",line);
             } else {
-                println!("({}) passing",
-                    tod.format("%I:%M %P")
-                ); 
+                let mut line = format!("{} passing",tod.format("%I:%M %P"));
+                let pkgs_count = get_upgradable_packages();
+                #[cfg(debug_assertions)]
+                println!("{}",pkgs_count);
+                if pkgs_count > 0 {
+                    let pkgs = format!(" ({})",pkgs_count).into_boxed_str();
+                    line += &pkgs
+                };
+                println!("{}",line); 
             }
         },
         None => {
