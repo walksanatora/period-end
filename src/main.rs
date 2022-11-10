@@ -133,18 +133,20 @@ fn load_scheduel() -> HashMap<Weekday,Schedule> {
 }
 
 fn get_upgradable_packages() -> usize {
-    let updates = Command::new("apt")
+    if let Ok(updates) = Command::new("apt")
         .args(["list","--upgradable"])
-        .output()
-        .expect("Failed to run apt list");
-    if updates.status.code().unwrap_or(1) == 0 {
-        let tmp = &updates.stdout.into_boxed_slice();
-        let o = String::from_utf8_lossy(tmp);
-        o.lines().count() - 1
-    } else {
-        eprintln!("! apt list failed");
-        0
-    }
+        .output() {
+            if updates.status.code().unwrap_or(1) == 0 {
+                let tmp = &updates.stdout.into_boxed_slice();
+                let o = String::from_utf8_lossy(tmp);
+                o.lines().count() - 1
+            } else {
+                eprintln!("! apt list failed");
+                0
+            }
+        } else {
+            0
+        }
 }
 
 fn main() {
