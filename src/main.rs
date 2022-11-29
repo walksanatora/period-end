@@ -1,7 +1,14 @@
 use std::collections::HashMap;
 use chrono::prelude::*;
 use std::process::Command;
+use clap::Parser;
 
+#[derive(Parser, Debug)]
+#[command(author = "walksanator", version = "v0.0.1", about = "A simple program that prints when my class period ends")]
+struct Args {
+    #[arg(short,long, help = "disables printing the time")]
+    notime: bool
+}
 
 #[derive(Clone)]
 struct Block {
@@ -150,17 +157,24 @@ fn get_upgradable_packages() -> usize {
 }
 
 fn main() {
+    let args = Args::parse();
     let datetime = Local::now();
     let tod = datetime.time();
     let sc = load_scheduel();
     //println!("{}",datetime.format("%a %H:%M"));
     let day_sched = sc.get(&datetime.weekday());
+    let time_disabled = std::env::var("NOTIME").is_ok() || args.notime;
+    let formatted_date = if time_disabled {
+        "".to_string()
+    } else {
+        tod.format("%I:%M %P").to_string()
+    };
     match day_sched {
         Some(sched) => {
             let blk = sched.get_block(&tod);
             if let Some(ublk) = blk {
-                    let mut line = format!("({}) {} {}-{}",
-                    tod.format("%I:%M %P"),
+                    let mut line = format!("{}{} {}-{}",
+                    if time_disabled {"".to_string()} else {format!("({}) ",formatted_date)},
                     ublk.name,
                     ublk.starts.format("%I:%M"),
                     ublk.ends.format("%I:%M %P"));
@@ -169,7 +183,7 @@ fn main() {
                     line += &pkgs};
                     println!("{}",line)
             } else if (tod > sched.end_of_day) || (tod < sched.start_of_day) {//2pm
-                let mut line = format!("{}",tod.format("%I:%M %P"));
+                let mut line = format!("{}",formatted_date);
                 let pkgs_count = get_upgradable_packages();
                 #[cfg(debug_assertions)]
                 println!("{}",pkgs_count);
@@ -179,7 +193,7 @@ fn main() {
                 };
                 println!("{}",line);
             } else {
-                let mut line = format!("{} passing",tod.format("%I:%M %P"));
+                let mut line = format!("{} passing",formatted_date);
                 let pkgs_count = get_upgradable_packages();
                 #[cfg(debug_assertions)]
                 println!("{}",pkgs_count);
@@ -191,7 +205,7 @@ fn main() {
             }
         },
         None => {
-            let mut line = format!("({})",tod.format("%I:%M %P"));
+            let mut line = format!("({})",formatted_date);
             let pkgs_count = get_upgradable_packages();
             #[cfg(debug_assertions)]
             println!("{}",pkgs_count);
