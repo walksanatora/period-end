@@ -2,6 +2,7 @@ use std::collections::HashMap;
 use chrono::prelude::*;
 use std::process::Command;
 use clap::Parser;
+use which::which;
 
 #[derive(Parser, Debug)]
 #[command(author = "walksanator", version = "v0.0.1", about = "A simple program that prints when my class period ends")]
@@ -140,9 +141,10 @@ fn load_scheduel() -> HashMap<Weekday,Schedule> {
 }
 
 fn get_upgradable_packages() -> usize {
-    if let Ok(updates) = Command::new("apt")
-        .args(["list","--upgradable"])
-        .output() {
+        if which("apt").is_ok(){
+            let updates = Command::new("apt")
+            .args(["list","--upgradable"])
+            .output().unwrap();
             if updates.status.code().unwrap_or(1) == 0 {
                 let tmp = &updates.stdout.into_boxed_slice();
                 let o = String::from_utf8_lossy(tmp);
@@ -151,9 +153,31 @@ fn get_upgradable_packages() -> usize {
                 eprintln!("! apt list failed");
                 0
             }
-        } else {
-            0
-        }
+        } else if which("paru").is_ok() {
+            let updates = Command::new("paru")
+            .args(["-Qu"])
+            .output().unwrap();
+            if updates.status.code().unwrap_or(1) == 0 {
+                let tmp = &updates.stdout.into_boxed_slice();
+                let o = String::from_utf8_lossy(tmp);
+                o.lines().count()
+            } else {
+                eprintln!("! paru -Qu failed");
+                0
+            }
+        } else if which("pacman").is_ok() {
+            let updates = Command::new("pacman")
+            .args(["-Qu"])
+            .output().unwrap();
+            if updates.status.code().unwrap_or(1) == 0 {
+                let tmp = &updates.stdout.into_boxed_slice();
+                let o = String::from_utf8_lossy(tmp);
+                o.lines().count()
+            } else {
+                eprintln!("! pacman -Qu failed");
+                0
+            }
+        } else {0}
 }
 
 fn main() {
