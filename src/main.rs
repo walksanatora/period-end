@@ -1,8 +1,12 @@
 use std::collections::HashMap;
 use chrono::prelude::*;
-use std::process::Command;
 use clap::Parser;
-use which::which;
+
+mod structs;
+use structs::*;
+
+mod update_counter;
+use update_counter::get_upgradable_packages;
 
 #[derive(Parser, Debug)]
 #[command(author = "walksanator", version = "v0.0.1", about = "A simple program that prints when my class period ends")]
@@ -11,110 +15,88 @@ struct Args {
     notime: bool
 }
 
-#[derive(Clone)]
-struct Block {
-    starts: NaiveTime,
-    ends: NaiveTime,
-    name: String,
-}
-
-#[derive(Clone)]
-struct Schedule {
-    blocks: Vec<Block>,
-    start_of_day: NaiveTime,
-    end_of_day: NaiveTime
-}
-impl Schedule {
-    fn get_block(&self, dt: &NaiveTime) -> Option<Block> {
-        for block in &self.blocks {
-            if (dt < &block.ends) && (dt > &block.starts) {
-                return Some(block.clone())
-            }
-        };
-        None
-    }
-}
-
-fn load_scheduel() -> HashMap<Weekday,Schedule> {
+fn fallback_sched() -> HashMap<Weekday, Schedule> {
+    #[cfg(debug_assertions)]
+    println!("Defaulting schedele");
     let mut outputs = HashMap::new();
     //create scheduels for the days of the week (todo: read from file)
     let mon = Schedule {
         blocks: vec![
             Block { 
-                starts: NaiveTime::from_hms(8,30, 0),
-                ends: NaiveTime::from_hms(9,10,0),
+                starts: NaiveTime::from_hms_opt(8,30, 0).unwrap(),
+                ends: NaiveTime::from_hms_opt(9,10,0).unwrap(),
                 name: "Per. 1".to_string()
             },
             Block { 
-                starts: NaiveTime::from_hms(9,16, 0),
-                ends: NaiveTime::from_hms(9,58,0),
+                starts: NaiveTime::from_hms_opt(9,16, 0).unwrap(),
+                ends: NaiveTime::from_hms_opt(9,58,0).unwrap(),
                 name: "Per. 2".to_string()
             },
             Block { 
-                starts: NaiveTime::from_hms(10,4, 0),
-                ends: NaiveTime::from_hms(10,44,0),
+                starts: NaiveTime::from_hms_opt(10,4, 0).unwrap(),
+                ends: NaiveTime::from_hms_opt(10,44,0).unwrap(),
                 name: "Per. 3".to_string()
             },
             Block { 
-                starts: NaiveTime::from_hms(10,50, 0),
-                ends: NaiveTime::from_hms(11,30,0),
+                starts: NaiveTime::from_hms_opt(10,50, 0).unwrap(),
+                ends: NaiveTime::from_hms_opt(11,30,0).unwrap(),
                 name: "Per. 4".to_string()
             },
             Block { 
-                starts: NaiveTime::from_hms(11,36, 0),
-                ends: NaiveTime::from_hms(12,16,0),
+                starts: NaiveTime::from_hms_opt(11,36, 0).unwrap(),
+                ends: NaiveTime::from_hms_opt(12,16,0).unwrap(),
                 name: "Per. 5".to_string()
             },
             Block { 
-                starts: NaiveTime::from_hms(12,52, 0),
-                ends: NaiveTime::from_hms(13,32,0),
+                starts: NaiveTime::from_hms_opt(12,52, 0).unwrap(),
+                ends: NaiveTime::from_hms_opt(13,32,0).unwrap(),
                 name: "Per. 6".to_string()
             }
         ],
-        start_of_day: NaiveTime::from_hms(9,16,0),
-        end_of_day: NaiveTime::from_hms(13,32,0)
+        start_of_day: NaiveTime::from_hms_opt(9,16,0).unwrap(),
+        end_of_day: NaiveTime::from_hms_opt(13,32,0).unwrap()
     };
     let wed_fri = Schedule { 
         blocks:  vec![
             Block {
-                starts: NaiveTime::from_hms(8, 30, 0),
-                ends: NaiveTime::from_hms(10,2,0),
+                starts: NaiveTime::from_hms_opt(8, 30, 0).unwrap(),
+                ends: NaiveTime::from_hms_opt(10,2,0).unwrap(),
                 name: "Per. 2".to_string()
             },
             Block {
-                starts: NaiveTime::from_hms(10,10, 0),
-                ends: NaiveTime::from_hms(11,50,0),
+                starts: NaiveTime::from_hms_opt(10,10, 0).unwrap(),
+                ends: NaiveTime::from_hms_opt(11,50,0).unwrap(),
                 name: "Per. 4".to_string()
             },
             Block {
-                starts: NaiveTime::from_hms(13, 5, 0),
-                ends: NaiveTime::from_hms(14,37,0),
+                starts: NaiveTime::from_hms_opt(13, 5, 0).unwrap(),
+                ends: NaiveTime::from_hms_opt(14,37,0).unwrap(),
                 name: "Per. 6".to_string()
             }
         ],
-        start_of_day: NaiveTime::from_hms(9,16,0),
-        end_of_day: NaiveTime::from_hms(14,37,0)
+        start_of_day: NaiveTime::from_hms_opt(9,16,0).unwrap(),
+        end_of_day: NaiveTime::from_hms_opt(14,37,0).unwrap()
     };
     let tue_thur = Schedule { 
         blocks:  vec![
             Block {
-                starts: NaiveTime::from_hms(8, 30, 0),
-                ends: NaiveTime::from_hms(10,2,0),
+                starts: NaiveTime::from_hms_opt(8, 30, 0).unwrap(),
+                ends: NaiveTime::from_hms_opt(10,2,0).unwrap(),
                 name: "Per. 1".to_string()
             },
             Block {
-                starts: NaiveTime::from_hms(10,10, 0),
-                ends: NaiveTime::from_hms(11,50,0),
+                starts: NaiveTime::from_hms_opt(10,10, 0).unwrap(),
+                ends: NaiveTime::from_hms_opt(11,50,0).unwrap(),
                 name: "Per. 3".to_string()
             },
             Block {
-                starts: NaiveTime::from_hms(13, 5, 0),
-                ends: NaiveTime::from_hms(14,37,0),
+                starts: NaiveTime::from_hms_opt(13, 5, 0).unwrap(),
+                ends: NaiveTime::from_hms_opt(14,37,0).unwrap(),
                 name: "Per. 5".to_string()
             }
         ],
-        start_of_day: NaiveTime::from_hms(9,16,0),
-        end_of_day: NaiveTime::from_hms(14,37,0)
+        start_of_day: NaiveTime::from_hms_opt(9,16,0).unwrap(),
+        end_of_day: NaiveTime::from_hms_opt(14,37,0).unwrap()
     };
     //adding days to the output
     outputs.insert(
@@ -140,44 +122,21 @@ fn load_scheduel() -> HashMap<Weekday,Schedule> {
     outputs
 }
 
-fn get_upgradable_packages() -> usize {
-        if which("apt").is_ok(){
-            let updates = Command::new("apt")
-            .args(["list","--upgradable"])
-            .output().unwrap();
-            if updates.status.code().unwrap_or(1) == 0 {
-                let tmp = &updates.stdout.into_boxed_slice();
-                let o = String::from_utf8_lossy(tmp);
-                o.lines().count() - 1
-            } else {
-                eprintln!("! apt list failed");
-                0
-            }
-        } else if which("paru").is_ok() {
-            let updates = Command::new("paru")
-            .args(["-Qu"])
-            .output().unwrap();
-            if updates.status.code().unwrap_or(1) == 0 {
-                let tmp = &updates.stdout.into_boxed_slice();
-                let o = String::from_utf8_lossy(tmp);
-                o.lines().count()
-            } else {
-                eprintln!("! paru -Qu failed");
-                0
-            }
-        } else if which("pacman").is_ok() {
-            let updates = Command::new("pacman")
-            .args(["-Qu"])
-            .output().unwrap();
-            if updates.status.code().unwrap_or(1) == 0 {
-                let tmp = &updates.stdout.into_boxed_slice();
-                let o = String::from_utf8_lossy(tmp);
-                o.lines().count()
-            } else {
-                eprintln!("! pacman -Qu failed");
-                0
-            }
-        } else {0}
+fn load_scheduel() -> HashMap<Weekday,Schedule> {
+    let string = std::fs::read_to_string("sched.json");
+    if let Ok(cstring) = string {
+        let content = cstring.into_boxed_str();
+        let content = serde_json::from_str::<Week>(&content);
+        if let Ok(week) = content {
+            #[cfg(debug_assertions)]
+            println!("Unpacking week");
+            week.into()
+        } else {
+            fallback_sched()
+        }
+    } else {
+        fallback_sched()
+    }
 }
 
 fn main() {
@@ -185,7 +144,8 @@ fn main() {
     let datetime = Local::now();
     let tod = datetime.time();
     let sc = load_scheduel();
-    //println!("{}",datetime.format("%a %H:%M"));
+    #[cfg(debug_assertions)]
+    println!("{}",datetime.format("%a %H:%M"));
     let day_sched = sc.get(&datetime.weekday());
     let time_disabled = std::env::var("NOTIME").is_ok() || args.notime;
     let formatted_date = if time_disabled {
@@ -220,7 +180,7 @@ fn main() {
                 let mut line = format!("{} passing",formatted_date);
                 let pkgs_count = get_upgradable_packages();
                 #[cfg(debug_assertions)]
-                println!("{}",pkgs_count);
+                println!("Packages {}",pkgs_count);
                 if pkgs_count > 0 {
                     let pkgs = format!(" ({})",pkgs_count).into_boxed_str();
                     line += &pkgs

@@ -1,0 +1,197 @@
+{
+    "mon": {
+        "blocks": [
+            {
+                "starts":{"h":8, "m":30},
+                "ends":{"h":9,"m":10},
+                "name": "Per. 1"
+            },
+            {
+                "starts":{"h":9, "m":16},
+                "ends":{"h":9,"m":58},
+                "name": "Per. 2"
+            },
+            {
+                "starts":{"h":10, "m":4},
+                "ends":{"h":10,"m":44},
+                "name": "Per. 3"
+            },
+            {
+                "starts":{"h":10, "m":50},
+                "ends":{"h":11,"m":30},
+                "name": "Per. 4"
+            },
+            {
+                "starts":{"h":11, "m":36},
+                "ends":{"h":12,"m":16},
+                "name": "Per. 5"
+            },
+            {
+                "starts":{"h":12, "m":16},
+                "ends":{"h":12,"m":46},
+                "name": "Lunch"
+            },
+            {
+                "starts":{"h":12, "m":52},
+                "ends":{"h":13,"m":32},
+                "name": "Per. 6"
+            }
+        ],
+        "start_of_day": {
+            "h": 9,
+            "m": 16
+        },
+        "end_of_day": {
+            "h": 13,
+            "m": 32
+        }
+    },
+    "tues": {
+        "blocks": [
+            {
+                "starts":{"h":8, "m":30},
+                "ends":{"h":10,"m":2},
+                "name": "Per. 1"
+            },
+            {
+                "starts":{"h":10, "m":16},
+                "ends":{"h":11,"m":50},
+                "name": "Per. 3"
+            },
+            {
+                "starts:":{"h":11,"m":56},
+                "ends":{"h":12,"m":29},
+                "name": "Flex"
+            },
+            {
+                "starts":{"h":12, "m":29},
+                "ends":{"h":12,"m":59},
+                "name": "Lunch"
+            },
+            {
+                "starts":{"h":13, "m":5},
+                "ends":{"h":14,"m":37},
+                "name": "Per. 5"
+            }
+        ],
+        "start_of_day": {
+            "h": 9,
+            "m": 16
+        },
+        "end_of_day": {
+            "h": 14,
+            "m": 37
+        }
+    },
+    "wens": {
+        "blocks": [
+            {
+                "starts":{"h":8, "m":30},
+                "ends":{"h":10,"m":2},
+                "name": "Per. 2"
+            },
+            {
+                "starts":{"h":10, "m":16},
+                "ends":{"h":11,"m":50},
+                "name": "Per. 4"
+            },
+            {
+                "starts:":{"h":11,"m":56},
+                "ends":{"h":12,"m":29},
+                "name": "Flex"
+            },
+            {
+                "starts":{"h":12, "m":29},
+                "ends":{"h":12,"m":59},
+                "name": "Lunch"
+            },
+            {
+                "starts":{"h":13, "m":5},
+                "ends":{"h":14,"m":37},
+                "name": "Per. 6"
+            }
+        ],
+        "start_of_day": {
+            "h": 9,
+            "m": 16
+        },
+        "end_of_day": {
+            "h": 14,
+            "m": 37
+        }
+    },
+    "thurs": {
+        "blocks": [
+            {
+                "starts":{"h":8, "m":30},
+                "ends":{"h":10,"m":2},
+                "name": "Per. 1"
+            },
+            {
+                "starts":{"h":10, "m":16},
+                "ends":{"h":11,"m":50},
+                "name": "Per. 3"
+            },
+            {
+                "starts:":{"h":11,"m":56},
+                "ends":{"h":12,"m":29},
+                "name": "Flex"
+            },
+            {
+                "starts":{"h":12, "m":29},
+                "ends":{"h":12,"m":59},
+                "name": "Lunch"
+            },
+            {
+                "starts":{"h":13, "m":5},
+                "ends":{"h":14,"m":37},
+                "name": "Per. 5"
+            }
+        ],
+        "start_of_day": {
+            "h": 9,
+            "m": 16
+        },
+        "end_of_day": {
+            "h": 14,
+            "m": 37
+        }
+    },
+    "fri": {
+        "blocks": [
+            {
+                "starts":{"h":8, "m":30},
+                "ends":{"h":10,"m":2},
+                "name": "Per. 2"
+            },
+            {
+                "starts":{"h":10, "m":16},
+                "ends":{"h":11,"m":50},
+                "name": "Per. 4"
+            },
+            {
+                "starts:":{"h":11,"m":56},
+                "ends":{"h":12,"m":29},
+                "name": "Flex"
+            },
+            {
+                "starts":{"h":12, "m":29},
+                "ends":{"h":12,"m":59},
+                "name": "Lunch"
+            },
+            {
+                "starts":{"h":13, "m":5},
+                "ends":{"h":14,"m":37},
+                "name": "Per. 6"
+            }
+        ],
+        "start_of_day": {
+            "h": 9,
+            "m": 16
+        },
+        "end_of_day": {
+            "h": 14,
+            "m": 37
+        }
+    }
+}
