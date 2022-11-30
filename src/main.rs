@@ -198,7 +198,6 @@ fn main() {
                 line += &pkgs
             };
             println!("{}",line);
-
         }
     }
 }
