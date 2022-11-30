@@ -12,7 +12,9 @@ use update_counter::get_upgradable_packages;
 #[command(author = "walksanator", version = "v0.0.1", about = "A simple program that prints when my class period ends")]
 struct Args {
     #[arg(short,long, help = "disables printing the time")]
-    notime: bool
+    notime: bool,
+    #[arg(short,long,help = "path to the json file", default_value = "sched.json")]
+    sched_path: String
 }
 
 fn fallback_sched() -> HashMap<Weekday, Schedule> {
@@ -122,8 +124,8 @@ fn fallback_sched() -> HashMap<Weekday, Schedule> {
     outputs
 }
 
-fn load_scheduel() -> HashMap<Weekday,Schedule> {
-    let string = std::fs::read_to_string("sched.json");
+fn load_scheduel(args: &Args) -> HashMap<Weekday,Schedule> {
+    let string = std::fs::read_to_string(args.sched_path.clone());
     if let Ok(cstring) = string {
         let content = cstring.into_boxed_str();
         let content = serde_json::from_str::<Week>(&content);
@@ -143,7 +145,7 @@ fn main() {
     let args = Args::parse();
     let datetime = Local::now();
     let tod = datetime.time();
-    let sc = load_scheduel();
+    let sc = load_scheduel(&args);
     #[cfg(debug_assertions)]
     println!("{}",datetime.format("%a %H:%M"));
     let day_sched = sc.get(&datetime.weekday());
