@@ -27,9 +27,12 @@ fn load_scheduel(args: &Args) -> Option<HashMap<Weekday,Schedule>> {
             println!("Unpacking week");
             Some(week.into())
         } else {
+            println!("failed parse");
+            println!("{:?}",content.unwrap_err());
             None
         }
     } else {
+        println!("failed read");
         None
     }
 }

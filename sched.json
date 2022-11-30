@@ -59,7 +59,7 @@
                 "name": "Per. 3"
             },
             {
-                "starts:":{"h":11,"m":56},
+                "starts":{"h":11,"m":56},
                 "ends":{"h":12,"m":29},
                 "name": "Flex"
             },
@@ -96,7 +96,7 @@
                 "name": "Per. 4"
             },
             {
-                "starts:":{"h":11,"m":56},
+                "starts":{"h":11,"m":56},
                 "ends":{"h":12,"m":29},
                 "name": "Flex"
             },
@@ -133,7 +133,7 @@
                 "name": "Per. 3"
             },
             {
-                "starts:":{"h":11,"m":56},
+                "starts":{"h":11,"m":56},
                 "ends":{"h":12,"m":29},
                 "name": "Flex"
             },
@@ -170,7 +170,7 @@
                 "name": "Per. 4"
             },
             {
-                "starts:":{"h":11,"m":56},
+                "starts":{"h":11,"m":56},
                 "ends":{"h":12,"m":29},
                 "name": "Flex"
             },

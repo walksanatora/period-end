@@ -1,5 +1,7 @@
 use std::collections::HashMap;
 
+use schemars::JsonSchema;
+
 use chrono::prelude::*;
 use serde::{Serialize,Deserialize};
 
@@ -17,7 +19,10 @@ pub struct Schedule {
     pub start_of_day: NaiveTime,
     pub end_of_day: NaiveTime
 }
+
 impl Schedule {
+    //clippy was being drunk and saying this was dead code, it is not it is used
+    #[allow(dead_code)]
     pub fn get_block(&self, dt: &NaiveTime) -> Option<Block> {
         for block in &self.blocks {
             if (dt < &block.ends) && (dt > &block.starts) {
@@ -29,27 +34,27 @@ impl Schedule {
 }
 
 //all the structs that are converted from json
-#[derive(Serialize,Deserialize,Debug)]
+#[derive(Serialize,Deserialize,JsonSchema,Debug)]
 pub struct Time {
     h: u8,
     m: u8
 }
 
-#[derive(Serialize,Deserialize,Debug)]
+#[derive(Serialize,Deserialize,JsonSchema,Debug)]
 pub struct JsonBlock {
     starts: Time,
     ends: Time,
     name: String
 }
 
-#[derive(Serialize,Deserialize,Debug)]
+#[derive(Serialize,Deserialize,JsonSchema,Debug)]
 pub struct Day {
     blocks: Vec<JsonBlock>,
     start_of_day: Time,
     end_of_day: Time,
 }
 
-#[derive(Serialize,Deserialize,Debug)]
+#[derive(Serialize,Deserialize,JsonSchema,Debug)]
 pub struct Week {
     mon: Day,
     tues: Day,
@@ -59,12 +64,12 @@ pub struct Week {
 }
 
 //convert from the json types to rust types
+
 impl Into<NaiveTime> for Time {
     fn into(self) -> NaiveTime {
         NaiveTime::from_hms_opt(self.h.into(), self.m.into(),0).unwrap_or_default()
     }
 }
-
 impl Into<Block> for JsonBlock {
     fn into(self) -> Block {
         Block {
@@ -74,7 +79,6 @@ impl Into<Block> for JsonBlock {
         }
     }
 }
-
 impl Into<Schedule> for Day {
     fn into(self) -> Schedule {
         let mut blocks = vec![];
